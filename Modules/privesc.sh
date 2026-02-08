@@ -1,55 +1,44 @@
 #!/bin/bash
 # ==============================================
-# CTF-Forge - Privilege Escalation Enumeration
+# CTF-Forge - Privilege Escalation Module
 # ==============================================
 
 TARGET="$1"
 
-# Check target
-if [ -z "$TARGET" ]; then
+if [[ -z "$TARGET" ]]; then
     echo "Usage: privesc.sh <target-ip>"
     exit 1
 fi
 
-OUT_DIR="Output/$TARGET"
-OUT_FILE="$OUT_DIR/privesc.txt"
-
+OUT_DIR="Output/$TARGET/privesc"
 mkdir -p "$OUT_DIR"
 
-echo "[+] Privilege Escalation Enumeration" | tee "$OUT_FILE"
-echo "-----------------------------------" >> "$OUT_FILE"
-
-# Current user info
-echo "[*] User information" | tee -a "$OUT_FILE"
-whoami >> "$OUT_FILE"
-id >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
-
-# Sudo permissions
-echo "[*] Sudo permissions (sudo -l)" | tee -a "$OUT_FILE"
-sudo -l 2>/dev/null >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
+echo "[+] Privilege escalation checks started"
+echo "--------------------------------------"
 
 # SUID binaries
-echo "[*] SUID binaries" | tee -a "$OUT_FILE"
-find / -perm -4000 -type f 2>/dev/null >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
+echo "[*] Searching for SUID binaries..."
+find / -perm -4000 -type f 2>/dev/null > "$OUT_DIR/suid_files.txt"
 
-# Writable files owned by root
-echo "[*] Writable files owned by root" | tee -a "$OUT_FILE"
-find / -writable -user root -type f 2>/dev/null >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
+# Writable files
+echo "[*] Searching for writable files..."
+find / -writable -type f 2>/dev/null | head -n 500 > "$OUT_DIR/writable_files.txt"
+
+# Sudo permissions
+echo "[*] Checking sudo permissions..."
+sudo -l 2>/dev/null > "$OUT_DIR/sudo_permissions.txt"
 
 # Cron jobs
-echo "[*] Cron jobs" | tee -a "$OUT_FILE"
-cat /etc/crontab 2>/dev/null >> "$OUT_FILE"
-ls -la /etc/cron* 2>/dev/null >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
+echo "[*] Checking cron jobs..."
+ls -la /etc/cron* 2>/dev/null > "$OUT_DIR/cron_jobs.txt"
 
-# Kernel & OS info
-echo "[*] System information" | tee -a "$OUT_FILE"
-uname -a >> "$OUT_FILE"
-cat /etc/os-release 2>/dev/null >> "$OUT_FILE"
-echo "" >> "$OUT_FILE"
+# Environment info
+echo "[*] Collecting system info..."
+{
+    echo "User: $(whoami)"
+    echo "Hostname: $(hostname)"
+    echo "Kernel: $(uname -a)"
+} > "$OUT_DIR/system_info.txt"
 
-echo "[+] Privilege escalation enumeration completed." | tee -a "$OUT_FILE"
+echo "[+] Privilege escalation checks completed."
+echo "[+] Results saved in $OUT_DIR"
