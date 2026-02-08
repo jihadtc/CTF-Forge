@@ -10,7 +10,7 @@ banner() {
 | |     | | | |_   _____  | |_ / _ \| '__/ _` |/ _ \
 | |___  | | |  _|  _____  |  _| (_) | | | (_| |  __/
  \____| |_| |_|           |_|  \___/|_|  \__, |\___|
-                                     |___/      
+                                         |___/      
 Implementation, integration, and customization by : Jihad Tichti
 EOF
   echo -e "${NC}"
