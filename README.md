@@ -63,7 +63,7 @@ CTF-Forge/
 
 **2. Go into the folder:**
 
-       cd ctf-forge
+       cd CTF-Forge
 
 **3. Make the script executable:**
 
