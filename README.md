@@ -37,10 +37,10 @@ Cybersecurity & CTF Enthusiast
 ```
 ctf-forge/
 ├── ctf-forge.sh
-├── core/
-├── modules/
-├── wordlists/
-├── output/
+├── Core/
+├── Modules/
+├── Wordlists/
+├── Output/
 └── README.md
 ```
 
